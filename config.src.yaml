@@ -1,0 +1,6 @@
+database:
+  host: 'localhost'
+  port: 5432
+  username: 'tsd'
+  password: 'master15s0'
+  databaseName: 'tsd'

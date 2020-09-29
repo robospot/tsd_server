@@ -1,0 +1,16 @@
+name: tsd
+description: An empty Aqueduct application.
+version: 0.0.1
+author: stable|kernel <jobs@stablekernel.com>
+
+environment:
+  sdk: ">=2.0.0 <3.0.0"
+
+dependencies:
+  aqueduct: ^4.0.0-b1
+  http_server: ^0.9.8+3
+  excel: ^1.1.5
+
+dev_dependencies:
+  test: ^1.0.0
+  aqueduct_test: ^2.0.0-b1
