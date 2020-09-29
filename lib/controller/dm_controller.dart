@@ -1,4 +1,5 @@
 import 'package:tsd/model/dm.dart';
+import 'package:tsd/model/sscc.dart';
 
 import '../tsd.dart';
 
@@ -29,8 +30,7 @@ class DmController extends ResourceController {
     //Проверяем на соответствие DM и EAN
     if (checkIsUsed.ean != dm.ean) {
       return Response.badRequest(body: 'Datamatrix не соответствует EAN');
-    }
-    else 
+    } else
     //Проверяем использована ли DM ранее
     if (checkIsUsed.isUsed == true) {
       return Response.badRequest(body: 'Datamatrix уже был использован');
@@ -44,13 +44,22 @@ class DmController extends ResourceController {
         ..where((u) => u.datamatrix).equalTo(dm.datamatrix);
 
       await query2.updateOne();
-
+//Подсчет кол-ва КМ по SSCC
       final query3 = Query<Dm>(context)
         ..where((u) => u.sscc).equalTo(dm.sscc)
         ..where((u) => u.isUsed).equalTo(true);
       final int ssccCount = await query3.reduce.count() ?? 0;
 
-      return Response.ok(ssccCount);
+//Подсчет кол-ва КМ по EAN
+      final query4 = Query<Dm>(context)
+        ..where((u) => u.ean).equalTo(dm.ean)
+        ..where((u) => u.isUsed).equalTo(true);
+      final int eanCount = await query4.reduce.count() ?? 0;
+      final object = Sscc();
+      object.ssccCount = ssccCount;
+      object.eanCount = eanCount;
+      final Map<String, dynamic> map = object.asMap();
+      return Response.ok(map);
     }
   }
 }
