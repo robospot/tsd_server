@@ -55,11 +55,22 @@ class DmController extends ResourceController {
         ..where((u) => u.ean).equalTo(dm.ean)
         ..where((u) => u.isUsed).equalTo(true);
       final int eanCount = await query4.reduce.count() ?? 0;
+
+//Передача подсчета
       final object = Sscc();
       object.ssccCount = ssccCount;
       object.eanCount = eanCount;
       final Map<String, dynamic> map = object.asMap();
       return Response.ok(map);
     }
+  }
+
+ // Очистка таблицы
+  @Operation.delete()
+  Future<Response> clearDmTable() async {
+    final query = Query<Dm>(context)..canModifyAllInstances = true;
+    await query.delete();
+
+    return Response.ok('Таблица очищена');
   }
 }

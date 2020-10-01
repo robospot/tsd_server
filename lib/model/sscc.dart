@@ -7,6 +7,9 @@ class _Sscc {
    @primaryKey
   int id;
   
+  @Column(nullable: true)
+  String eanDescription;
+
   @Column(nullable: false)
   int ssccCount;
 

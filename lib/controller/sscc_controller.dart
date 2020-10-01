@@ -1,4 +1,5 @@
 import 'package:tsd/model/dm.dart';
+import 'package:tsd/model/sscc.dart';
 
 import '../tsd.dart';
 
@@ -9,6 +10,8 @@ class SsccController extends ResourceController {
 
   @Operation.get('id')
   Future<Response> getSsccById(@Bind.path("id") String ssccCode) async {
+
+//Подсчет кол-ва КМ по SSCC
     final query = Query<Dm>(context)
       ..where((u) => u.sscc).equalTo(ssccCode)
       ..where((u) => u.isUsed).equalTo(true);
@@ -16,6 +19,11 @@ class SsccController extends ResourceController {
     // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
     // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
 
-    return Response.ok(ssccCount);
+//Передача подсчета      
+      final object = Sscc();
+      object.ssccCount = ssccCount;
+      final Map<String, dynamic> map = object.asMap();
+      return Response.ok(map);
+
   }
 }
