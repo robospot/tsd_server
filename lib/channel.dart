@@ -5,6 +5,7 @@ import 'controller/dm_controller.dart';
 import 'controller/ean_controller.dart';
 import 'controller/identity_controller.dart';
 import 'controller/media_controller.dart';
+import 'controller/packList_controller.dart';
 import 'controller/register_controller.dart';
 import 'controller/sscc_controller.dart';
 import 'model/user.dart';
@@ -63,8 +64,8 @@ router.route("/media/").link(() => MediaController(context));
 router.route("/company").link(() => CompanyController(context));
 router.route("/dm").link(() => DmController(context));
 router.route("/sscc/[:id]").link(() => SsccController(context));
-router.route("/ean/[:id]").link(() => EanController(context));
-
+router.route("/ean/[:id]").link(() => EanController(context)); 
+router.route("/packlist/[:id]").link(() => PackListController(context));
 
 
     return router;
