@@ -10,7 +10,7 @@ class RegisterController extends ResourceController {
   final AuthServer authServer;
 
   @Operation.post()
-  Future<Response> createUser(@Bind.body() User user) async {
+  Future<Response> createUser(@Bind.body(ignore: ['id']) User user) async {
     // Check for required parameters before we spend time hashing
     if (user.username == null || user.password == null) {
       return Response.badRequest(
@@ -21,8 +21,13 @@ class RegisterController extends ResourceController {
       ..hashedPassword = authServer.hashPassword(user.password, user.salt);
     //
     try {
-      final User response = await Query(context, values: user).insert();
-      return Response.ok(response);
+      final User createdUser = await Query(context, values: user).insert();
+       final q = Query<User>(context)
+      ..where((u) => u.id).equalTo(createdUser.id)
+      ..join(object: (u) => u.vendororg);
+      
+      
+      return Response.ok(await q.fetchOne());
     } catch (e) {
       print('error: $e');
       return Response.unauthorized();

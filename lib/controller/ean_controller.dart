@@ -24,11 +24,9 @@ class EanController extends ResourceController {
     // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
 
 //Получаем название EAN
-    final query2 = Query<Ean>(context)
-      ..where((u) => u.ean).equalTo(eanCode);
-    final Ean eanName = await query2.fetchOne();      
+    final query2 = Query<Ean>(context)..where((u) => u.ean).equalTo(eanCode);
+    final Ean eanName = await query2.fetchOne();
 
-    
 //Передача подсчета
     final object = Sscc();
     object.eanDescription = eanName?.description;
@@ -94,14 +92,21 @@ class EanController extends ResourceController {
           print(t);
 
           if (t[0] != null) {
-            try {
-              final query = Query<Ean>(context)
-                ..values.ean = t[0].toString()
-                ..values.language = t[1].toString()
-                ..values.description = t[2].toString();
-              final ean = await query.insert();
-            } catch (e) {
-              print(e);
+            var query1 = Query<Ean>(context)
+              ..where((data) => data.ean).equalTo(t[0].toString())
+              ..where((data) => data.language)
+                  .equalTo(t[1].toString().toUpperCase());
+            var checkEan = await query1.fetchOne();
+            if (checkEan == null) {
+              try {
+                final query2 = Query<Ean>(context)
+                  ..values.ean = t[0].toString()
+                  ..values.language = t[1].toString().toUpperCase()
+                  ..values.description = t[2].toString();
+                await query2.insert();
+              } catch (e) {
+                print(e);
+              }
             }
           }
         }

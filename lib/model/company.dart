@@ -1,4 +1,5 @@
 
+import 'package:tsd/model/user.dart';
 import 'package:tsd/tsd.dart';
 
 class Company extends ManagedObject<_Company> implements _Company {
@@ -24,6 +25,8 @@ class _Company {
 
   @Column(nullable: false)
   String fullName;
+
+  ManagedSet<User> vendorUsers;
 
   @Column(indexed: true)
   DateTime createdAt;

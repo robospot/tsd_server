@@ -16,7 +16,7 @@ class CompanyController extends ResourceController {
   }
 
   @Operation.post()
-  Future<Response> addCompany(@Bind.body() Company company) async {
+  Future<Response> addCompany( @Bind.body(ignore: ['id']) Company company) async {
     // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
     // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
 

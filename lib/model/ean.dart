@@ -13,12 +13,16 @@ class Ean extends ManagedObject<_Ean> implements _Ean {
   }
 }
 
-@Table(name: "Ean")
+@Table(name: 'Ean')
+
 class _Ean {
-  @Column(indexed: true, primaryKey: true)
+@primaryKey
+  int id;
+  
+  @Column(indexed: true)
   String ean;
 
-  
+@Column(indexed: true)
   String language;
 
   String description;

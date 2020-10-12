@@ -8,6 +8,7 @@ import 'controller/media_controller.dart';
 import 'controller/packList_controller.dart';
 import 'controller/register_controller.dart';
 import 'controller/sscc_controller.dart';
+import 'controller/user_controller.dart';
 import 'model/user.dart';
 import 'tsd.dart';
 
@@ -21,7 +22,7 @@ class TsdChannel extends ApplicationChannel {
   Future prepare() async {
     logger.onRecord.listen(
         (rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
-         logger.parent.level = Level.FINE;
+         logger.parent.level = Level.ALL;
 
     final config = DatabaseConfig(options.configurationFilePath);
 
@@ -66,6 +67,7 @@ router.route("/dm").link(() => DmController(context));
 router.route("/sscc/[:id]").link(() => SsccController(context));
 router.route("/ean/[:id]").link(() => EanController(context)); 
 router.route("/packlist/[:id]").link(() => PackListController(context));
+router.route("/user/[:id]").link(() => UserController(context));
 
 
     return router;
