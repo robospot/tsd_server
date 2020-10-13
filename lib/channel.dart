@@ -7,6 +7,7 @@ import 'controller/identity_controller.dart';
 import 'controller/media_controller.dart';
 import 'controller/packList_controller.dart';
 import 'controller/register_controller.dart';
+import 'controller/restorePassword_controller.dart';
 import 'controller/sscc_controller.dart';
 import 'controller/user_controller.dart';
 import 'model/user.dart';
@@ -63,14 +64,20 @@ class TsdChannel extends ApplicationChannel {
 
 router.route("/media/").link(() => MediaController(context));
 router.route("/company").link(() => CompanyController(context));
-router.route("/dm").link(() => DmController(context));
-router.route("/sscc/[:id]").link(() => SsccController(context));
-router.route("/ean/[:id]").link(() => EanController(context)); 
+router.route("/dm").link(() => Authorizer.bearer(authServer)) 
+.link(() => DmController(context));
+router.route("/sscc/[:id]").link(() => Authorizer.bearer(authServer)) 
+.link(() => SsccController(context));
+router.route("/ean/[:id]").link(() => Authorizer.bearer(authServer)) 
+.link(() => EanController(context)); 
 router.route("/packlist/[:id]").link(() => PackListController(context));
 router.route("/user/[:id]").link(() => UserController(context));
-
-
+ router.route('/restorepass')
+    .link(() => RestorePasswordController(context, authServer));
     return router;
+
+
+    
   }
 }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aqueduct/aqueduct.dart';
 import 'package:tsd/model/user.dart';
+import 'package:tsd/utils/mailer.dart';
 
 class RegisterController extends ResourceController {
   RegisterController(this.context, this.authServer);
@@ -22,6 +23,7 @@ class RegisterController extends ResourceController {
     //
     try {
       final User createdUser = await Query(context, values: user).insert();
+   //   MailService.mailRegisterUser(user);
        final q = Query<User>(context)
       ..where((u) => u.id).equalTo(createdUser.id)
       ..join(object: (u) => u.vendororg);

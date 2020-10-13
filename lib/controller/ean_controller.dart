@@ -4,6 +4,7 @@ import 'package:tsd/model/sscc.dart';
 import 'package:excel/excel.dart';
 import 'package:mime/mime.dart';
 import 'package:http_server/http_server.dart';
+import 'package:tsd/model/user.dart';
 
 import '../tsd.dart';
 
@@ -16,9 +17,17 @@ class EanController extends ResourceController {
   @Operation.get('id')
   Future<Response> getEanById(@Bind.path("id") String eanCode) async {
 //Подсчет кол-ва КМ по EAN
+
+//Проверка на принадлежность организации   
+    final queryUser = Query<User>(context)
+    ..where((user) => user.id).identifiedBy(request.authorization.ownerID);
+
+     final User user = await queryUser.fetchOne();
+
     final query = Query<Dm>(context)
       ..where((u) => u.ean).equalTo(eanCode)
-      ..where((u) => u.isUsed).equalTo(true);
+      ..where((u) => u.isUsed).equalTo(true)
+      ..where((x) => x.organization).equalTo(user.vendororg.id);
     final int eanCount = await query.reduce.count() ?? 0;
     // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
     // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
