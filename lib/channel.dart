@@ -72,7 +72,7 @@ router.route("/ean/[:id]").link(() => Authorizer.bearer(authServer))
 .link(() => EanController(context)); 
 router.route("/packlist/[:id]").link(() => PackListController(context));
 router.route("/user/[:id]").link(() => UserController(context));
- router.route('/restorepass')
+ router.route('/restorepass/[:email]')
     .link(() => RestorePasswordController(context, authServer));
     return router;
 

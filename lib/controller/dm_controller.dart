@@ -59,6 +59,7 @@ class DmController extends ResourceController {
 
 //Подсчет кол-ва КМ по EAN
       final query4 = Query<Dm>(context)
+        ..where((x) => x.sscc).equalTo(dm.sscc)
         ..where((u) => u.ean).equalTo(dm.ean)
         ..where((u) => u.isUsed).equalTo(true);
       final int eanCount = await query4.reduce.count() ?? 0;

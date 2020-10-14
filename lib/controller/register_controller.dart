@@ -23,7 +23,7 @@ class RegisterController extends ResourceController {
     //
     try {
       final User createdUser = await Query(context, values: user).insert();
-   //   MailService.mailRegisterUser(user);
+      MailService.mailRegisterUser(user);
        final q = Query<User>(context)
       ..where((u) => u.id).equalTo(createdUser.id)
       ..join(object: (u) => u.vendororg);

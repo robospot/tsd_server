@@ -1,4 +1,3 @@
-
 import 'package:aqueduct/aqueduct.dart';
 import 'package:random_string/random_string.dart';
 import 'package:tsd/model/user.dart';
@@ -10,25 +9,27 @@ class RestorePasswordController extends ResourceController {
   final AuthServer authServer;
   final ManagedContext context;
 
-  @Operation.post()
-  Future<Response> restorePassword( @Bind.body() User user) async {
-
-   final String randomPass = randomAlphaNumeric(10);
-   String salt = AuthUtility.generateRandomSalt();
-      final query = Query<User>(context)
-      ..where((n) => n.email).equalTo(user.email)
+  @Operation.post('email')
+  Future<Response> restorePassword(@Bind.path("email") String email) async {
+    print('email:');
+    print(email);
+    final String randomPass = randomAlphaNumeric(10);
+    String salt = AuthUtility.generateRandomSalt();
+    final query = Query<User>(context)
+      ..where((n) => n.email).equalTo(email)
       ..values.salt = salt
-       ..values.hashedPassword = authServer.hashPassword(randomPass, salt);
+      ..values.hashedPassword = authServer.hashPassword(randomPass, salt);
 
-   final u = await query.updateOne();
-    if (u == null) {
+    final createdUser = await query.updateOne();
+    if (createdUser == null) {
       return Response.notFound();
-    }
+    } else {
+      MailService.mailRestorePassword(createdUser, randomPass);
+      final q = Query<User>(context)
+        ..where((u) => u.id).equalTo(createdUser.id)
+        ..join(object: (u) => u.vendororg);
 
-else{
-  MailService.mailRestorePassword(u, randomPass);
-    return Response.ok(u);
-}
-  }   
-     
+      return Response.ok(await q.fetchOne());
+    }
+  }
 }

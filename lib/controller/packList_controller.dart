@@ -18,7 +18,7 @@ class PackListController extends ResourceController {
     //Проверяем на существование SSCC
     var query3 = Query<Dm>(context)
     ..where((data) => data.sscc).equalTo(pl.sscc);
-    Dm checkData = await query3.fetchOne();
+    final Dm checkData = await query3.fetchOne();
     if (checkData == null){
       return Response.badRequest(body: 'Запрошенного SSCC кода не существует');
     }
@@ -26,7 +26,7 @@ class PackListController extends ResourceController {
 
     //Проверяем на наличие связки PL + SSCC, если такой нет - добавляем в БД, иначе удаляем
     var query = Query<PackList>(context)
-      ..where((data) => data.packList).equalTo(pl.packList)
+      // ..where((data) => data.packList).equalTo(pl.packList)
       ..where((data) => data.sscc).equalTo(pl.sscc);
     PackList _packList = await query.fetchOne();
     
@@ -37,13 +37,18 @@ class PackListController extends ResourceController {
         ..values.sscc = pl.sscc;
       return Response.ok(await query2.insert());
     } else {
+      // Если SSCC уже существует то проверяем паклист если совпадает - удаляем из БД иначе сообщение об ошибке
+      if (_packList.packList == pl.packList){
       //Удаляем из БД
-      var query2 = Query<PackList>(context)
+      final query2 = Query<PackList>(context)
         ..where((data) => data.sscc).equalTo(pl.sscc);
       return Response.ok(await query2.delete());
+      }
+      else 
+      return Response.badRequest(body: 'SSCC код уже включен в упаковочный лист ${_packList.packList}');
     }
   }
-
+//Отдаем перечень SSCC по коду паклиста
   @Operation.get('id')
   Future<Response> getPackListById(@Bind.path("id") String plCode) async {
     final query = Query<PackList>(context)

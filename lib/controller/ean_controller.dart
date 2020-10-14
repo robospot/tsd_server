@@ -14,44 +14,46 @@ class EanController extends ResourceController {
   }
   final ManagedContext context;
 
-  @Operation.get('id')
-  Future<Response> getEanById(@Bind.path("id") String eanCode) async {
+  @Operation.get()
+  Future<Response> getEan(
+      @Bind.query('sscc') String ssccCode,
+      @Bind.query('ean') String eanCode,
+      @Bind.query('lang') String lang) async {
+//Если не передаем EAN значит забираем все EAN
+    if (eanCode == null) {
+      final query = Query<Ean>(context);
+      return Response.ok(await query.fetch());
+    } else {
 //Подсчет кол-ва КМ по EAN
 
-//Проверка на принадлежность организации   
-    final queryUser = Query<User>(context)
-    ..where((user) => user.id).identifiedBy(request.authorization.ownerID);
+//Проверка на принадлежность организации
+      final queryUser = Query<User>(context)
+        ..where((user) => user.id).identifiedBy(request.authorization.ownerID);
 
-     final User user = await queryUser.fetchOne();
+      final User user = await queryUser.fetchOne();
 
-    final query = Query<Dm>(context)
-      ..where((u) => u.ean).equalTo(eanCode)
-      ..where((u) => u.isUsed).equalTo(true)
-      ..where((x) => x.organization).equalTo(user.vendororg.id);
-    final int eanCount = await query.reduce.count() ?? 0;
-    // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
-    // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
+      final query = Query<Dm>(context)
+        ..where((u) => u.ean).equalTo(eanCode)
+        ..where((y) => y.isUsed).equalTo(true)
+        ..where((z) => z.sscc).equalTo(ssccCode)
+        ..where((x) => x.organization).equalTo(user.vendororg.id);
+      final int eanCount = await query.reduce.count() ?? 0;
+      // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
+      // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
 
 //Получаем название EAN
-    final query2 = Query<Ean>(context)..where((u) => u.ean).equalTo(eanCode);
-    final Ean eanName = await query2.fetchOne();
+      final query2 = Query<Ean>(context)
+        ..where((u) => u.ean).equalTo(eanCode)
+        ..where((x) => x.language).equalTo(lang);
+      final Ean eanName = await query2.fetchOne();
 
 //Передача подсчета
-    final object = Sscc();
-    object.eanDescription = eanName?.description;
-    object.eanCount = eanCount;
-    final Map<String, dynamic> map = object.asMap();
-    return Response.ok(map);
-  }
-
-  @Operation.get()
-  Future<Response> getAllEan() async {
-    final query = Query<Ean>(context);
-
-    // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
-    // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
-
-    return Response.ok(await query.fetch());
+      final object = Sscc();
+      object.eanDescription = eanName?.description;
+      object.eanCount = eanCount;
+      final Map<String, dynamic> map = object.asMap();
+      return Response.ok(map);
+    }
   }
 
   @Operation.post()
