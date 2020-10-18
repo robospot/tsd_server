@@ -27,7 +27,7 @@ class RestorePasswordController extends ResourceController {
       MailService.mailRestorePassword(createdUser, randomPass);
       final q = Query<User>(context)
         ..where((u) => u.id).equalTo(createdUser.id)
-        ..join(object: (u) => u.vendororg);
+        ..join(object: (u) => u.vendor);
 
       return Response.ok(await q.fetchOne());
     }

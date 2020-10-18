@@ -30,7 +30,7 @@ class DmController extends ResourceController {
 //Блок проверок на коды
     final query1 = Query<Dm>(context)
       ..where((u) => u.datamatrix).equalTo(dm.datamatrix)
-      ..where((x) => x.organization).equalTo(user.vendororg.id);
+      ..where((x) => x.organization).equalTo(user.vendor.id);
     final Dm checkIsUsed = await query1.fetchOne();
     //Проверяем на соответствие DM и EAN
     if (checkIsUsed == null) {
@@ -45,7 +45,7 @@ class DmController extends ResourceController {
       //Если DM не была использована, сохраняем
       final query2 = Query<Dm>(context)
         
-        ..values.organization = user.vendororg.id
+        ..values.organization = user.vendor.id
         ..values.sscc = dm.sscc
         ..values.isUsed = true
         ..where((u) => u.datamatrix).equalTo(dm.datamatrix);

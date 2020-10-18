@@ -12,6 +12,7 @@ dependencies:
   excel: ^1.1.5
   mailer: ^3.2.1
   random_string: ^2.0.1
+  postgres: ^2.2.0
 
 dev_dependencies:
   test: ^1.0.0

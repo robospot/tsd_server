@@ -9,7 +9,8 @@ class UserController extends ResourceController {
   @Operation.get()
   Future<Response> getAllUsers() async {
     final query = Query<User>(context)
-     ..join(object: (u) => u.vendororg);
+     ..join(object: (u) => u.vendor)
+     ..join(object: (u) => u.customer);
     // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
 
     return Response.ok(await query.fetch());

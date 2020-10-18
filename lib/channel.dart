@@ -23,7 +23,7 @@ class TsdChannel extends ApplicationChannel {
   Future prepare() async {
     logger.onRecord.listen(
         (rec) => print("$rec ${rec.error ?? ""} ${rec.stackTrace ?? ""}"));
-         logger.parent.level = Level.ALL;
+    logger.parent.level = Level.ALL;
 
     final config = DatabaseConfig(options.configurationFilePath);
 
@@ -62,22 +62,30 @@ class TsdChannel extends ApplicationChannel {
         .link(() => Authorizer.bearer(authServer))
         .link(() => IdentityController(context));
 
-router.route("/media/").link(() => MediaController(context));
-router.route("/company").link(() => CompanyController(context));
-router.route("/dm").link(() => Authorizer.bearer(authServer)) 
-.link(() => DmController(context));
-router.route("/sscc/[:id]").link(() => Authorizer.bearer(authServer)) 
-.link(() => SsccController(context));
-router.route("/ean/[:id]").link(() => Authorizer.bearer(authServer)) 
-.link(() => EanController(context)); 
-router.route("/packlist/[:id]").link(() => PackListController(context));
-router.route("/user/[:id]").link(() => UserController(context));
- router.route('/restorepass/[:email]')
-    .link(() => RestorePasswordController(context, authServer));
+    router.route("/media/").link(() => MediaController(context));
+    router.route("/company").link(() => CompanyController(context));
+    router
+        .route("/dm")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => DmController(context));
+    router
+        .route("/sscc/[:id]")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => SsccController(context));
+    router
+        .route("/ean/[:id]")
+        .link(() => Authorizer.bearer(authServer))
+        .link(() => EanController(context));
+    router.route("/packlist/[:id]").link(() => PackListController(context));
+    router.route("/user/[:id]").link(() => UserController(context));
+    router
+        .route('/restorepass/[:email]')
+        .link(() => RestorePasswordController(context, authServer));
+    router.route('/swagger').linkFunction((request) async {
+      final client = await File('client.html').readAsString();
+      return Response.ok(client)..contentType = ContentType.html;
+    });
     return router;
-
-
-    
   }
 }
 

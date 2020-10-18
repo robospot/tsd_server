@@ -15,10 +15,10 @@ class EanController extends ResourceController {
   final ManagedContext context;
 
   @Operation.get()
-  Future<Response> getEan(
+  Future<Response> getEan({
       @Bind.query('sscc') String ssccCode,
       @Bind.query('ean') String eanCode,
-      @Bind.query('lang') String lang) async {
+      @Bind.query('lang') String lang}) async {
 //Если не передаем EAN значит забираем все EAN
     if (eanCode == null) {
       final query = Query<Ean>(context);
@@ -36,7 +36,7 @@ class EanController extends ResourceController {
         ..where((u) => u.ean).equalTo(eanCode)
         ..where((y) => y.isUsed).equalTo(true)
         ..where((z) => z.sscc).equalTo(ssccCode)
-        ..where((x) => x.organization).equalTo(user.vendororg.id);
+        ..where((x) => x.organization).equalTo(user.vendor.id);
       final int eanCount = await query.reduce.count() ?? 0;
       // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
       // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);

@@ -23,7 +23,7 @@ class SsccController extends ResourceController {
     final query = Query<Dm>(context)
       ..where((u) => u.sscc).equalTo(ssccCode)
       ..where((u) => u.isUsed).equalTo(true)
-      ..where((x) => x.organization).equalTo(user.vendororg.id);
+      ..where((x) => x.organization).equalTo(user.customer.id);
             
    
     final int ssccCount = await query.reduce.count() ?? 0;

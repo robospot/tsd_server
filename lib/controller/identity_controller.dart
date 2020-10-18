@@ -13,7 +13,7 @@ class IdentityController extends ResourceController {
     final q = Query<User>(context)
       ..where((u) => u.id).equalTo(request.authorization.ownerID)
      
-      ..join(object: (u) => u.vendororg);
+      ..join(object: (u) => u.vendor);
       
 
     final u = await q.fetchOne();

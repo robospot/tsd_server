@@ -2,6 +2,7 @@ import 'package:aqueduct/managed_auth.dart';
 
 import '../tsd.dart';
 import 'company.dart';
+import 'customer.dart';
 
 class User extends ManagedObject<_User>
     implements _User, ManagedAuthResourceOwner<_User> {
@@ -27,7 +28,10 @@ class _User extends ResourceOwnerTableDefinition {
   @Column(nullable: true)
   String name;
   @Relate(#vendorUsers)
-  Company vendororg;
+  Company vendor;
+
+  @Relate(#customerUsers)
+  Customer customer;
     
 
  

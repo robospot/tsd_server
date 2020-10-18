@@ -7,12 +7,15 @@ class CompanyController extends ResourceController {
   final ManagedContext context;
 
   @Operation.get()
-  Future<Response> getAllCompany() async {
-    final query = Query<Company>(context);
-    // ..join(set: (u) => u.units).join(set: (f) => f.details).join(set:(v) => v.values)
-    // ..where((n) => n.owner).identifiedBy(request.authorization.ownerID);
+  Future<Response> getAllCompany(@Bind.header('X-TENANT-ID') String customer) async {
 
+    var response = await context.persistentStore.executeQuery('Select * from public.company ', {}, 60);
+    print('response: $response');
+
+
+     final query = Query<Company>(context);
     return Response.ok(await query.fetch());
+    // return Response.ok(response);
   }
 
   @Operation.post()
